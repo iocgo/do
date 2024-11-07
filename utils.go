@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"fmt"
 	"io"
+	"reflect"
 	"sync"
 )
 
@@ -231,4 +232,14 @@ func raceWithTimeout(ctx context.Context, fn func(context.Context) error) error 
 	case <-ctx.Done():
 		return fmt.Errorf("%s: %w", ErrHealthCheckTimeout.Error(), ctx.Err())
 	}
+}
+
+func interfaceTypeOf[T any]() reflect.Type {
+	var zero T
+	ox := reflect.TypeOf(zero)
+	if ox == nil {
+		ox = reflect.TypeOf((*T)(nil))
+		return ox.Elem()
+	}
+	return nil
 }

@@ -21,6 +21,8 @@ type serviceLazy[T any] struct {
 	typeName string
 	instance T
 
+	instanceRef reflect.Type
+
 	// lazy loading
 	built     bool
 	buildTime time.Duration
@@ -46,6 +48,8 @@ func newServiceLazy[T any](name string, provider Provider[T]) *serviceLazy[T] {
 		providerFrame:           providerFrame,
 		invokationFrames:        map[stacktrace.Frame]struct{}{},
 		invokationFramesCounter: 0,
+
+		instanceRef: interfaceTypeOf[T](),
 	}
 }
 
@@ -59,6 +63,13 @@ func (s *serviceLazy[T]) getTypeName() string {
 
 func (s *serviceLazy[T]) getServiceType() ServiceType {
 	return ServiceTypeLazy
+}
+
+func (s *serviceLazy[T]) implements(reflect.Type) bool {
+	if s.instanceRef == nil {
+		return true
+	}
+	return s.instanceRef.Implements(interfaceTypeOf[T]())
 }
 
 func (s *serviceLazy[T]) getEmptyInstance() any {

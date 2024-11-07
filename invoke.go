@@ -81,13 +81,18 @@ func invokeByName[T any](i Injector, name string) (T, error) {
 		vScope.addDependency(injector, name, serviceScope)
 	}
 
-	service, ok := serviceAny.(Service[T])
+	service, ok := serviceAny.(ServiceAny)
 	if !ok {
 		return empty[T](), serviceTypeMismatch(inferServiceName[T](), serviceAny.(ServiceAny).getTypeName())
 	}
 
+	// type validate
+	if !service.implements(interfaceTypeOf[T]()) {
+		return empty[T](), serviceTypeMismatch(inferServiceName[T](), serviceAny.(ServiceAny).getTypeName())
+	}
+
 	injector.RootScope().opts.onBeforeInvocation(serviceScope, name)
-	instance, err := service.getInstance(&virtualScope{invokerChain: invokerChain, self: serviceScope})
+	instance, err := service.getInstanceAny(&virtualScope{invokerChain: invokerChain, self: serviceScope})
 	injector.RootScope().opts.onAfterInvocation(serviceScope, name, err)
 
 	if err != nil {
@@ -98,7 +103,7 @@ func invokeByName[T any](i Injector, name string) (T, error) {
 
 	injector.RootScope().opts.Logf("DI: service %s invoked", name)
 
-	return instance, nil
+	return instance.(T), nil
 }
 
 // invokeByGenericType look for a service by its type.

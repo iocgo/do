@@ -2,6 +2,7 @@ package do
 
 import (
 	"context"
+	"reflect"
 
 	"github.com/samber/do/v2/stacktrace"
 )
@@ -39,6 +40,8 @@ func (s *serviceTransient[T]) getTypeName() string {
 func (s *serviceTransient[T]) getServiceType() ServiceType {
 	return ServiceTypeTransient
 }
+
+func (s *serviceTransient[T]) implements(reflect.Type) bool { return true }
 
 func (s *serviceTransient[T]) getEmptyInstance() any {
 	return empty[T]()

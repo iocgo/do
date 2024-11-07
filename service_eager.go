@@ -2,6 +2,7 @@ package do
 
 import (
 	"context"
+	"reflect"
 	"sync"
 	"sync/atomic"
 
@@ -17,6 +18,8 @@ type serviceEager[T any] struct {
 	name     string
 	typeName string
 	instance T
+
+	instanceRef reflect.Type
 
 	providerFrame           stacktrace.Frame
 	invokationFrames        map[stacktrace.Frame]struct{} // map garanties uniqueness
@@ -36,6 +39,8 @@ func newServiceEager[T any](name string, instance T) *serviceEager[T] {
 		invokationFrames:        map[stacktrace.Frame]struct{}{},
 		invokationFramesMu:      sync.RWMutex{},
 		invokationFramesCounter: 0,
+
+		instanceRef: interfaceTypeOf[T](),
 	}
 }
 
@@ -49,6 +54,13 @@ func (s *serviceEager[T]) getTypeName() string {
 
 func (s *serviceEager[T]) getServiceType() ServiceType {
 	return ServiceTypeEager
+}
+
+func (s *serviceEager[T]) implements(reflect.Type) bool {
+	if s.instanceRef == nil {
+		return true
+	}
+	return s.instanceRef.Implements(interfaceTypeOf[T]())
 }
 
 func (s *serviceEager[T]) getEmptyInstance() any {

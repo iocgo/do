@@ -2,6 +2,7 @@ package do
 
 import (
 	"context"
+	"reflect"
 	"time"
 
 	"github.com/samber/do/v2/stacktrace"
@@ -39,6 +40,7 @@ type Service[T any] interface {
 	shutdown(context.Context) error
 	clone() any
 	source() (stacktrace.Frame, []stacktrace.Frame)
+	implements(reflect.Type) bool
 }
 
 // Like Service[T] but without the generic type.
@@ -55,6 +57,7 @@ type ServiceAny interface {
 	shutdown(context.Context) error
 	clone() any
 	source() (stacktrace.Frame, []stacktrace.Frame)
+	implements(reflect.Type) bool
 }
 
 type serviceGetName interface{ getName() string }

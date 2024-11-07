@@ -3,6 +3,7 @@ package do
 import (
 	"context"
 	"fmt"
+	"reflect"
 	"sync"
 	"sync/atomic"
 
@@ -53,6 +54,8 @@ func (s *serviceAlias[Initial, Alias]) getTypeName() string {
 func (s *serviceAlias[Initial, Alias]) getServiceType() ServiceType {
 	return ServiceTypeAlias
 }
+
+func (s *serviceAlias[Initial, Alias]) implements(reflect.Type) bool { return true }
 
 func (s *serviceAlias[Initial, Alias]) getEmptyInstance() any {
 	return empty[Alias]()
