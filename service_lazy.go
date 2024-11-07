@@ -65,11 +65,11 @@ func (s *serviceLazy[T]) getServiceType() ServiceType {
 	return ServiceTypeLazy
 }
 
-func (s *serviceLazy[T]) implements(reflect.Type) bool {
-	if s.instanceRef == nil {
-		return true
+func (s *serviceLazy[T]) implements(ref reflect.Type) bool {
+	if ref.Kind() != reflect.Interface {
+		return false
 	}
-	return s.instanceRef.Implements(interfaceTypeOf[T]())
+	return s.instanceRef.Implements(ref)
 }
 
 func (s *serviceLazy[T]) getEmptyInstance() any {

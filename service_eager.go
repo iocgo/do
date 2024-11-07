@@ -56,11 +56,11 @@ func (s *serviceEager[T]) getServiceType() ServiceType {
 	return ServiceTypeEager
 }
 
-func (s *serviceEager[T]) implements(reflect.Type) bool {
-	if s.instanceRef == nil {
-		return true
+func (s *serviceEager[T]) implements(ref reflect.Type) bool {
+	if ref.Kind() != reflect.Interface {
+		return false
 	}
-	return s.instanceRef.Implements(interfaceTypeOf[T]())
+	return s.instanceRef.Implements(ref)
 }
 
 func (s *serviceEager[T]) getEmptyInstance() any {

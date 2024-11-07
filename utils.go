@@ -239,7 +239,11 @@ func interfaceTypeOf[T any]() reflect.Type {
 	ox := reflect.TypeOf(zero)
 	if ox == nil {
 		ox = reflect.TypeOf((*T)(nil))
-		return ox.Elem()
 	}
-	return nil
+
+	if ox.Kind() == reflect.Ptr {
+		ox = ox.Elem()
+	}
+
+	return ox
 }

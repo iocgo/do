@@ -41,7 +41,7 @@ func (s *serviceTransient[T]) getServiceType() ServiceType {
 	return ServiceTypeTransient
 }
 
-func (s *serviceTransient[T]) implements(reflect.Type) bool { return true }
+func (s *serviceTransient[T]) implements(reflect.Type) bool { return false }
 
 func (s *serviceTransient[T]) getEmptyInstance() any {
 	return empty[T]()

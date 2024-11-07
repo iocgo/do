@@ -55,7 +55,7 @@ func (s *serviceAlias[Initial, Alias]) getServiceType() ServiceType {
 	return ServiceTypeAlias
 }
 
-func (s *serviceAlias[Initial, Alias]) implements(reflect.Type) bool { return true }
+func (s *serviceAlias[Initial, Alias]) implements(reflect.Type) bool { return false }
 
 func (s *serviceAlias[Initial, Alias]) getEmptyInstance() any {
 	return empty[Alias]()

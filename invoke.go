@@ -88,7 +88,10 @@ func invokeByName[T any](i Injector, name string) (T, error) {
 
 	// type validate
 	if !service.implements(interfaceTypeOf[T]()) {
-		return empty[T](), serviceTypeMismatch(inferServiceName[T](), serviceAny.(ServiceAny).getTypeName())
+		service, ok = serviceAny.(Service[T])
+		if !ok {
+			return empty[T](), serviceTypeMismatch(inferServiceName[T](), serviceAny.(ServiceAny).getTypeName())
+		}
 	}
 
 	injector.RootScope().opts.onBeforeInvocation(serviceScope, name)
